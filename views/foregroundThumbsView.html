@@ -1,0 +1,13 @@
+<div class="container-fluid">
+	<div class="row" id="grabF">
+       		<% foregrounds.forEach(function(foreground) { %>
+                	<div class="col-md-3 col-sm-3 col-xs-3">
+                  		<div class="thumbnail_container">
+                                	<div class="thumbnail">
+                                        	<img src='foreground_thumbs/<%= foreground %>' id='<%= foreground %>' style="max-height:100%">
+                                  	</div>
+                            	</div>
+                     	</div>
+              	<% }); %>
+      	</div>
+</div>

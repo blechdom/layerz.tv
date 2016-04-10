@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Twitch Odysser: Homer's Control Page</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="socket.io/socket.io.js"></script>
+
+<style>
+@font-face {
+   font-family: myFirstFont;
+   src: url(/stylesheets/font_Caligo1.0.ttf);
+}
+.caligo {
+   font-family: myFirstFont;
+	padding-left: 50px;
+
+}
+.paddingh3
+{
+	padding-left: 50px;
+}
+.controlOn
+{
+  position: absolute;
+  top: 35%;
+  left: 15%;
+  width: 30%;
+  height: 20%;
+  font-size: 40px;
+}
+.controlOff
+{
+  position: absolute;
+  top: 35%;
+  left: 60%;
+  width: 30%;
+  height: 20%;
+  font-size: 40px;
+}
+.start
+{
+  position: absolute;
+  top: 55%;
+  left: 15%;
+  width: 30%;
+  height: 20%;
+  font-size: 40px;
+}
+.stop
+{
+  position: absolute;
+  top: 55%;
+  left: 60%;
+  width: 30%;
+  height: 20%;
+  font-size: 40px;
+}
+@font-face {
+   font-family: myFont;
+   src: url(/stylesheets/OpenSans-Regular.ttf);
+}
+div {
+   font-family: myFont;
+}
+h1 {
+    font-size: 68px;
+  font-family: myFirstFont;
+  margin-bottom: -35px;
+  margin-top: 0px;
+}
+h2 {
+    font-size: 42px;
+  font-family: myFirstFont;
+  margin-bottom:  15px;
+  padding-left: 50px;
+}
+h3 {
+    	font-size: 28px;
+	font-family: myFont;	
+}
+h4 {
+  font-size: 38px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-family: myFont;
+}
+</style>
+<script>
+
+ function recommendSausage()
+    {
+      if(document.getElementById("background").checked == true)
+      {
+        alert("Sausage goes well with peppers.");
+      }
+    }
+</script>
+
+</head>
+<body>
+<center>
+<h1>Layerz Controlz</h1>
+<br>
+<h2>Start and Stop Streams</h2><br>
+<form input="orderForm">
+<input onClick="recommendSausage()" id="background" type="checkbox" data-width=200 data-toggle="toggle" data-on="Background Lair<br>STREAMING" data-off="Background Lair<br>STOPPED" data-onstyle="success" data-offstyle="danger">
+<br><br>
+<input id="foreground" type="checkbox" data-width=200 data-toggle="toggle" data-on="Foreground Lair<br>STREAMING" data-off="Foreground Lair<br>STOPPED" data-onstyle="success" data-offstyle="danger">
+<br><br>
+<input id="multilayer" type="checkbox" data-width=200 data-toggle="toggle" data-on="Multilayer Lair<br>STREAMING" data-off="Multilayer Lair<br>STOPPED" data-onstyle="success" data-offstyle="danger">
+<Br><br>
+</form>
+<button type="button" onclick="controlOn()" class="controlOn">Freeze Frame</button>
+<button type="button" onclick="controlOff()" class="controlOff">Release Frame</button>
+<button type="button" onclick="startStream()" class="start">Begin Performance</button>
+<button type="button" onclick="stopStream()" class="stop">End Performance</button>
+<script>
+
+  var socket = io();
+
+  function controlOn() {
+    console.log('take control');
+    socket.emit('controlOn', 'on');
+  }
+
+  function controlOff() {
+    console.log('leave control');
+    socket.emit('controlOff', 'off');
+  }
+
+  function startStream() {
+    console.log('start stream');
+    socket.emit('changeStream', 'start');
+  }
+
+  function stopStream() {
+    console.log('stop stream');
+    socket.emit('changeStream', 'stop');
+  }
+
+  socket.on('connected', function (data) {
+    console.log('connected');
+  });
+
+</script>
+</body>
+</html>

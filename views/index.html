@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+	<head>
+  		<meta charset="UTF-8">
+  		<title>Layerz.tv</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+		<link rel="stylesheet" href="/stylesheets/style.css">
+  		<script src="socket.io/socket.io.js"></script>
+ <!--
+ <td>OBS Custom ServerSetup URL:
+  <br>rtmp://danmnet.ucsc.edu/live
+  <br>Stream Key: twitchodyssey "</td></tr>
+-->
+</head>
+<body>
+<div id="background">
+    <img src="/images/layerz.png" class="stretch" alt="" />
+</div>  
+<div id="notbackground">
+	<br><br><br><br><br><br><br>
+  	<h1>Layerz.tv</h1><h2><br>add your layer to the stream!</h2>
+        <br><h2>Join a Lair!!</h2><br><br>
+	<div class="row login.page" style="margin:10px">
+  	<div class="col-md-4">
+                    <a href="/foreground_lair">
+                         <div class="panel panel-default">
+                                <div class="panel-body">
+                                        <h2>Foreground Lair</h2>
+                                </div>
+                        </div>
+                   </a>
+                </div>
+		<div class="col-md-4">
+		    <a href="/background_lair">
+    			 <div class="panel panel-default">
+    				<div class="panel-body">
+					<h2>Background Lair</h2>
+				</div>
+			</div>
+		   </a>
+		</div>
+		<div class="col-md-4">
+                    <a href="/multilayer_lair">
+                         <div class="panel panel-default">
+                                <div class="panel-body">
+                                        <h2>Multilayer Lair</h2>
+                                </div>
+                        </div>
+                   </a>
+                </div>
+	</div>
+</div>
+</body>
+</html>

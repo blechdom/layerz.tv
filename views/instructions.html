@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="/javascripts/dropzone.js"></script>
+<script src="socket.io/socket.io.js"></script>
+<link rel="stylesheet" href="/stylesheets/dropzone.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+	<br><Br><br>	<form action="/upload" class="dropzone" id="my-dropzone"></form>
+
+<script>
+
+var socket = io();
+
+Dropzone.options.myDropzone = {
+        success: function(file, response) {
+                var obj = JSON.parse(response);
+                var name = obj.files[0].name;
+                console.log('create thumb : ' + name);
+                socket.emit('createThumb', name);
+                exec("ffmpeg -i public/uploaded/files/" + name  + " -ss 01:30 -r 1 -an -vframes 1 -f mjpeg public/images/" + name  + ".jpg", function(err){
+                //child_process.execFile("ffmpeg -i public/uploaded/files/" + name  + " -ss 01:30 -r 1 -an -vframes 1 -f mjpeg public/images/" + name  + ".jpg", function(err){
+                        socket.emit('done', {'Image' : 'public/images/' + name + '.jpg'});
+                });
+
+        },
+}
+
+</script>
+
+</body>
+</html>

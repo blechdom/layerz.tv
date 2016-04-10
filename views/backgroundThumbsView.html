@@ -1,0 +1,14 @@
+
+<div class="container-fluid">
+	<div class="row" id="grabB">
+       		<% backgrounds.forEach(function(background) { %>
+                	<div class="col-md-3 col-sm-3 col-xs-3">
+                  		<div class="thumbnail_container">
+                                	<div class="thumbnail">
+                                        	<img src='background_thumbs/<%= background %>' id='<%= background %>' style="max-height:100%">
+                                  	</div>
+                            	</div>
+                     	</div>
+              	<% }); %>
+      	</div>
+</div>

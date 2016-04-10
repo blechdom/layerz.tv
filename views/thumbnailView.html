@@ -1,0 +1,33 @@
+<form action="/upload" class="dropzone" id="my-dropzone"></form>
+
+<script>
+
+var socket = io();
+
+Dropzone.options.myDropzone = {
+        success: function(file, response) {
+                var obj = JSON.parse(response);
+                var name = obj.files[0].name;
+                console.log('create thumb : ' + name);
+                socket.emit('createThumb', name);
+                exec("ffmpeg -i public/uploaded/files/" + name  + " -ss 01:30 -r 1 -an -vframes 1 -f mjpeg public/images/" + name  + ".jpg", function(err){
+                //child_process.execFile("ffmpeg -i public/uploaded/files/" + name  + " -ss 01:30 -r 1 -an -vframes 1 -f mjpeg public/images/" + name  + ".jpg", function(err){
+                        socket.emit('done', {'Image' : 'public/images/' + name + '.jpg'});
+                });
+
+        },
+}
+</script>                   
+<div class="container-fluid">
+	<div class="row" id="grab">
+       		<% files.forEach(function(file) { %>
+                	<div class="col-md-3 col-sm-3 col-xs-3">
+                  		<div class="thumbnail_container">
+                                	<div class="thumbnail">
+                                        	<img src='thumbnails/<%= file %>' id='<%= file %>' style="max-height:100%">
+                                  	</div>
+                            	</div>
+                     	</div>
+              	<% }); %>
+      	</div>
+</div>

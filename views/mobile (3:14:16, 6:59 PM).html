@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<!-- Jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<!-- Custom styles for this template -->
+    <!-- <link href="stylesheets/grid.css" rel="stylesheet"> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="socket.io/socket.io.js"></script>
+    <!-- <link rel="stylesheet" href="/stylesheets/style.css"> -->
+    <style>
+		@font-face {
+		font-family: myFirstFont;
+		src: url(/stylesheets/font_Caligo1.0.ttf);
+		}
+		html {
+			overflow: visible;
+		}
+		h1 {
+		  font-size: 45px;
+		  font-family: myFirstFont;
+		  margin-top: -3px;
+		  margin-bottom: -35px;
+		  /*margin-left: 15%;*/
+		}
+		h2 {
+		  font-size: 25px;
+		  font-family: myFirstFont;
+		  /*margin-bottom:  -10px;*/
+		  /*margin-left: 18%;*/
+		}
+		.nameSelect {
+		  position: relative;
+		  margin-left: 15%;
+		  /*margin-bottom: -10px;
+		  margin-top: -10px;*/
+		}
+		/*.row {
+		  margin-bottom: 20px;
+		}
+		.row .row {
+		  margin-top: 10px;
+		  margin-bottom: 0;
+		}*/
+		/*[class*="col-"] {
+		  padding-top: 15px;
+		  padding-bottom: 15px;
+		  background-color: #eee;
+		  background-color: rgba(86,61,124,.15);
+		  border: 1px solid #ddd;
+		  border: 1px solid rgba(86,61,124,.2);
+		}*/
+		/*hr {
+		  margin-top: 40px;
+		  margin-bottom: 40px;
+		}*/
+		/* from index.html */
+		.thumbnail_container {
+		     position: relative;
+		     width: 100%;
+		     padding-bottom: 100%; <!-- matching this to above makes it square -->
+		     float:left;
+		}
+
+		.thumbnail {
+		    position:absolute;
+		    width:100%;
+		    height:100%;
+		}
+		.thumbnail_img {
+		    position: absolute;
+		    top: 0;
+		    bottom: 0;
+		    left: 0;
+		    right: 0;
+		    margin: auto;
+		}
+		.bordered {
+		  border-width: "thick";
+		  border-style: "solid";
+		  border-color: "#1a75ff";
+		}
+		.hoverOver {
+		    /*border-style: solid;
+		    border-width: medium;
+		    border-color: blue;
+		    *//*position: relative;*/
+		    visibility: hidden;
+		}
+		.locked {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			opacity: 0.4;
+			/*filter: alpha(opacity=40);*/ /* msie */
+		}
+		.chatLine {
+		  margin-left: 100px;
+		}
+		.scrollable {
+			/*overflow: auto;*/
+			overflow-y: scroll;
+			overflow-x: hidden;
+			height: 200px;
+			/*width: 100%;*/
+			/*margin-top: -20px;
+			margin-bottom: -15px;*/
+			margin-left: 10px;
+			margin-right: 0px;
+		}
+		img{
+		    max-height:100%;
+		    max-width:100%;
+		}
+		.submit{
+		  font-size: 34px;
+		}
+		.chatArea {
+		  max-height: 230px;
+		  /*max-height: 100%;*/
+		  min-height: 100%;  
+		  height: 230px;
+		  /*height: 100%;*/
+		  width: 100%;
+		  padding-left: 10px;
+		}
+		.messages {
+		  height: 100%;
+		  /*height:160px;*/
+		  margin: 0;
+		  overflow-y: scroll;
+		  padding: 10px 20px 10px 20px;
+		  list-style-type: none;
+		}
+		.inputMessage {
+		  border: 10px solid #000;
+		  outline: none;
+		  padding-left: 10px;
+		  width: 70%;
+		  height: 50px;
+
+		  /*right: 0;*/
+		  /*position: absolute;
+		  bottom: -23px;
+		  left: 0%;*/
+		}
+		.bigButton {
+			/*position: absolute;
+			right: -15px;
+			bottom: -22px;*/
+			font-size: 20px;
+		}
+		.usernameInput {
+		}
+		/*
+		.squeeze {
+			padding-top: -20px;
+			padding-bottom: -20px;
+		}*/
+    </style>
+    <title>Twitch Odyssey</title>
+  </head>
+  <body>
+	<div class="row">
+		<div class="col-md-4">
+			<center>
+				<h1>Twitch Odyssey</h1>
+				<h2>A Live Stream Performance</h2>
+			</center>
+		</div>
+		<div class="col-md-4">
+			<center>
+				<input type="text" name="username" placeholder="Choose your chat name"class="usernameInput">
+				<button type="button" onclick="setUsername()">Submit</button>
+			</center>
+		</div>
+		<div class="col-md-4">
+			<div class="scrollable">
+				<div class="row" id="grab">
+  					<% files.forEach(function(file) { %>
+      						<div class="col-xs-3">
+    							<div class="thumbnail_container">
+      								<div class="thumbnail">
+                    							<img src='thumbnails/<%= file %>' id='<%= file %>' style="max-height:100%" class="thumbnail_img">
+    								</div>
+    							</div>
+    						</div>
+    					<% }); %>
+      				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="chatArea">
+					<ul class="messages" id="chat"></ul>
+			</div>
+		</div>
+			<center>
+				<input class="inputMessage" placeholder=" Type here..."/>
+				<button type="button" class="bigButton" onclick="sendMessage()">Submit</button>
+			</center>
+		</div>
+	</div>
+
+	<script>
+		var socket = io();
+		var thumbnails = [];
+		var selection = null;
+		var pause = false;
+		// var username = null;
+
+		function thumbClick () {
+			if (!selection && !pause) {
+			  // socket.emit('recieveVote', this.src);
+			  console.log('voting for ' + this.src);
+			  // console.log(this.style);
+			  // this.style.borderColor = "#00e600";
+			  selection = this;
+			  // this.className = 'locked';
+			  socket.emit('recieveVote', this.src);
+			  for (var thumbnail in thumbnails) {
+			  	if (thumbnails[thumbnail] != selection) {
+			  		thumbnails[thumbnail].className = 'locked';
+			  	}
+			  }
+			}
+		}
+
+		// thumbnail logic
+		var grab = document.getElementById('grab');
+		// console.log(grab);
+		for (var a in grab.childNodes) {
+			a = grab.childNodes[a];
+			// console.log(a);
+			for (var b in a.childNodes) {
+			  b = a.childNodes[b];
+			  // console.log(b);
+			  for (var c in b.childNodes) {
+			    c = b.childNodes[c];
+			    // console.log(c);
+			    if (c.childNodes && c.childNodes.length != 0) {
+			      // console.log('------');
+			      // console.log(c.childNodes[0]);
+			      // console.log(c.childNodes[0].nextSibling);
+			      // console.log('------');
+			      var target = c.childNodes[0].nextSibling;
+			      target.onclick = thumbClick;
+			      // target.onmouseover = mouseOver;
+			      // target.onmouseout = mouseOut;
+			      // target.className = 'bordered';
+			      // console.log(target);
+			      thumbnails.push(target);
+			    }
+			  }
+			}
+		}
+
+		function lock(element, index, array) {
+			element.className = 'locked';
+		};
+
+		function unlock(element, index, array) {
+			element.className = 'thumbnail_img';
+		}
+
+		socket.on('pause', function (data) {
+			if (!pause) {
+			  // playerInstance.pause();
+			  // console.log(data);
+			  pause = true;
+			  thumbnails.forEach(lock);
+			  // for (var thumbnail in thumbnails) {
+			  // 	if (thumbnails[thumbnail] != selection) {
+			  // 		thumbnails[thumbnail].className = 'locked';
+			  // 	}
+			  // }
+			}
+		});
+
+
+		socket.on('unpause', function (data) {
+			if (pause) {
+			  // playerInstance.play();
+			  // console.log(data);
+			  pause = false;
+			  // if (nextVid.length != 0) {
+			  //   playerInstance.load([{file:nextVid}]);
+			  //   nextVid = "";
+			  // }
+			  // thumbnails.forEach(unlock);
+			  // for (var thumbnail in thumbnails) {
+			  // 	if (thumbnails[thumbnail] != selection) {
+			  // 		thumbnails[thumbnail].className = 'locked';
+			  // 	}
+			  // }
+			  if (selection) {
+			  	selection.className = 'thumbnail_img';
+			  } else {
+			  	thumbnails.forEach(unlock);
+			  }
+			}
+		});
+
+		
+		//chat logic
+		  var FADE_TIME = 150; // ms
+		  var TYPING_TIMER_LENGTH = 400; // ms
+		  var COLORS = [
+		    '#e21400', '#91580f', '#f8a700', '#f78b00',
+		    '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
+		    '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
+		  ];
+
+		  // Initialize variables
+		  var $window = $(window);
+		  var $usernameInput = $('.usernameInput'); // Input for username
+		  var $messages = $('.messages'); // Messages area
+		  var $inputMessage = $('.inputMessage'); // Input message input box
+
+		  var $loginPage = $('.login.page'); // The login page
+		  var $chatPage = $('.chat.page'); // The chatroom page
+
+		  // Prompt for setting a username
+		  var username;
+		  var connected = false;
+		  var typing = false;
+		  var lastTypingTime;
+		  var $currentInput = $usernameInput.focus();
+
+		  var socket = io();
+
+		  function addParticipantsMessage (data) {
+		    var message = '';
+		    if (data.numUsers === 1) {
+		      message += "there's 1 participant";
+		    } else {
+		      message += "there are " + data.numUsers + " participants";
+		    }
+		    log(message);
+		  }
+		  // Sets the client's username
+		  function setUsername () {
+		    username = cleanInput($usernameInput.val().trim());
+		    // console.log(username);
+
+		    // If the username is valid
+		    if (username) {
+		      // $loginPage.fadeOut();
+		      // $chatPage.show();
+		      // $loginPage.off('click');
+		      // $currentInput = $inputMessage.focus();
+
+		      // Tell the server your username
+		      socket.emit('adduser', username);
+		    }
+		  }
+
+		  // Sends a chat message
+		  function sendMessage () {
+		    var message = $inputMessage.val();
+		    // Prevent markup from being injected into the message
+		    message = cleanInput(message);
+		    console.log(message);
+		    // if there is a non-empty message and a socket connection
+		    if (message && username) {
+		      $inputMessage.val('');
+		      // addChatMessage({
+		      //   username: username,
+		      //   message: message
+		      // });
+		      // tell server to execute 'new message' and send along one parameter
+		      socket.emit('sendchat', message);
+		    }
+		  }
+
+		  // Log a message
+		  function log (message, options) {
+		    var $el = $('<li>').addClass('log').text(message);
+		    addMessageElement($el, options);
+		  }
+		  // Adds the visual chat message to the message list
+		  function addChatMessage (data, options) {
+		    // Don't fade the message in if there is an 'X was typing'
+		    var $typingMessages = getTypingMessages(data);
+		    options = options || {};
+		    if ($typingMessages.length !== 0) {
+		      options.fade = false;
+		      $typingMessages.remove();
+		    }
+
+		    var $usernameDiv = $('<span class="username"/>')
+		      .text(data.username)
+		      .css('color', getUsernameColor(data.username));
+		    var $messageBodyDiv = $('<span class="messageBody">')
+		      .text(' ' + data.message);
+
+		    var typingClass = data.typing ? 'typing' : '';
+		    var $messageDiv = $('<li class="message"/>')
+		      .data('username', data.username)
+		      .addClass(typingClass)
+		      .append($usernameDiv, $messageBodyDiv);
+
+		    addMessageElement($messageDiv, options);
+
+		    updateScroll();
+		  }
+
+		  function updateScroll(){
+		    var element = document.getElementById("chat");
+		    // console.log("1", element, element.scrollTop, element.scrollHeight);
+		    element.scrollTop = element.scrollHeight;
+		    // console.log("2", element, element.scrollTop, element.scrollHeight);
+		    // element.scrollTop = 30;
+		    // console.log("3", element, element.scrollTop, element.scrollHeight);
+		  }
+
+		  // Adds the visual chat typing message
+		  function addChatTyping (data) {
+		    data.typing = true;
+		    data.message = 'is typing';
+		    addChatMessage(data);
+		  }
+
+		  // Removes the visual chat typing message
+		  function removeChatTyping (data) {
+		    getTypingMessages(data).fadeOut(function () {
+		      $(this).remove();
+		    });
+		  }
+
+		  // Adds a message element to the messages and scrolls to the bottom
+		  // el - The element to add as a message
+		  // options.fade - If the element should fade-in (default = true)
+		  // options.prepend - If the element should prepend
+		  //   all other messages (default = false)
+		  function addMessageElement (el, options) {
+		    var $el = $(el);
+
+		    // Setup default options
+		    if (!options) {
+		      options = {};
+		    }
+		    if (typeof options.fade === 'undefined') {
+		      options.fade = true;
+		    }
+		    if (typeof options.prepend === 'undefined') {
+		      options.prepend = false;
+		    }
+
+		    // Apply options
+		    if (options.fade) {
+		      $el.hide().fadeIn(FADE_TIME);
+		    }
+		    if (options.prepend) {
+		      $messages.prepend($el);
+		    } else {
+		      $messages.append($el);
+		    }
+		    $messages[0].scrollTop = $messages[0].scrollHeight;
+		  }
+
+		  // Prevents input from having injected markup
+		  function cleanInput (input) {
+		    return $('<div/>').text(input).text();
+		  }
+
+		  // Updates the typing event
+		  function updateTyping () {
+		    if (connected) {
+		      if (!typing) {
+		        typing = true;
+		        socket.emit('typing');
+		      }
+		      lastTypingTime = (new Date()).getTime();
+
+		      setTimeout(function () {
+		        var typingTimer = (new Date()).getTime();
+		        var timeDiff = typingTimer - lastTypingTime;
+		        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+		          socket.emit('stop typing');
+		          typing = false;
+		        }
+		      }, TYPING_TIMER_LENGTH);
+		    }
+		  }
+
+		  // Gets the 'X is typing' messages of a user
+		  function getTypingMessages (data) {
+		    return $('.typing.message').filter(function (i) {
+		      return $(this).data('username') === data.username;
+		    });
+		  }
+
+		  // Gets the color of a username through our hash function
+		  function getUsernameColor (username) {
+		    // Compute hash code
+		    var hash = 7;
+		    for (var i = 0; i < username.length; i++) {
+		       hash = username.charCodeAt(i) + (hash << 5) - hash;
+		    }
+		    // Calculate color
+		    var index = Math.abs(hash % COLORS.length);
+		    return COLORS[index];
+		  }
+
+		  //chat events
+		// Whenever the server emits 'new message', update the chat body
+		  socket.on('new message', function (data) {
+		    addChatMessage(data);
+		  });
+
+
+		  // Whenever the server emits 'user joined', log it in the chat body
+		  socket.on('user joined', function (data) {
+		    log(data.username + ' joined');
+		    addParticipantsMessage(data);
+		  });
+
+		  // Whenever the server emits 'user left', log it in the chat body
+		  socket.on('user left', function (data) {
+		    log(data.username + ' left');
+		    addParticipantsMessage(data);
+		    removeChatTyping(data);
+		  });
+
+		  // Whenever the server emits 'typing', show the typing message
+		  socket.on('typing', function (data) {
+		    addChatTyping(data);
+		  });
+
+		  // Whenever the server emits 'stop typing', kill the typing message
+		  socket.on('stop typing', function (data) {
+		    removeChatTyping(data);
+		  });
+
+		  // Whenever the server emits 'stop typing', kill the typing message
+		  socket.on('updatechat', function (data) {
+		    console.log('update chat');
+		    console.log(data);
+		    addChatMessage(data);
+		  });
+
+		  socket.on('nextPlaying', function (data) {
+		    // console.log('new playing ');
+		    if (selection) {
+		      // selection.style.borderStyle = "none";
+		      selection = null;
+		    }
+		    if (!pause) {
+		    	thumbnails.forEach(unlock);
+		    }
+		  });
+	</script>
+  </body>
+</html>

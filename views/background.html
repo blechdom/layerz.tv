@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Background</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="socket.io/socket.io.js"></script>
+
+</head>
+<body backgroundColor="#50e821;">
+<center><div id="backgroundfeed"></div>	
+</center>
+<script src="/javascripts/jwplayer/jwplayer.js"></script>
+<script>jwplayer.key="hKr0It8yDiMnKte/Cy3p9KDJ74XfRooWYAiO8A==";</script>
+<script>
+var pause = false;
+var nextVid = "";
+var randomSkip = false;
+var choiceReady = false;
+var startTime = 0;
+
+
+//var timeoutID;
+
+//function startTimerForDefaultClip() {
+//  timeoutID = window.setTimeout(returnToDefaultClip, 60000);
+//}
+
+//function returnToDefaultClip() {
+//	if (!pause) {
+//    		playerInstance.load([{file:"/uploaded/files/green.mp4"}]);
+//	}
+//}
+
+//function clearTimerForDefaultClip() {
+//  window.clearTimeout(timeoutID);
+//}
+
+function myResize (event) {
+                height = window.innerHeight;
+                width = window.innerWidth;
+                if (playerInstance) {
+                        playerInstance.resize(width, height);
+                }
+        }
+        myResize();
+        window.onresize = myResize;
+
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+
+var playerInstance = jwplayer("backgroundfeed");
+playerInstance.setup({
+  file: "/uploaded/files/green.mp4",
+  controls: false,
+  autostart : true,
+  autoplay : true,
+  repeat : true,
+	width: w, // * .5,
+	height: h        
+});
+
+playerInstance.onComplete(function() {
+  socket.emit('playNextB', '');
+});
+
+playerInstance.onTime(function() {
+  console.log(randomSkip, elapsed, choiceReady);
+  if (randomSkip) {
+    // start random
+    var time = playerInstance.getDuration();
+    // console.log("duration " + time);
+    if (time > 8) {
+      var skip = Math.random() * (time - 8);
+      startTime = skip;
+      console.log("skip " + skip)
+      playerInstance.seek(skip);
+    } else {
+      startTime = 0;
+    }
+    randomSkip = false;
+  }
+  var position = playerInstance.getPosition();
+  var elapsed = position - startTime;
+  if (elapsed > 8 && choiceReady) {
+    console.log('switching from elapsed time');
+    socket.emit('playNextB', '');
+    choiceReady = false;
+  }
+});
+playerInstance.onError(function() {
+	playerInstance.load([{file:"/uploaded/files/green.mp4"}]);
+});
+
+var socket = io();
+
+socket.on('pause', function (data) {
+  if (!pause) {
+    playerInstance.pause();
+    console.log(data);
+    pause = true;
+  }
+});
+
+
+socket.on('unpause', function (data) {
+  if (pause) {
+    playerInstance.play();
+    console.log(data);
+    pause = false;
+    if (nextVid.length != 0) {
+      playerInstance.load([{file:nextVid}]);
+      nextVid = "";
+    }
+  }
+});
+
+socket.on('contentChangeB', function (data) {
+  console.log("play next " + data);
+  if (data == "repeat") {
+	return;
+  }
+  changeVideo(data);
+});
+
+socket.on('choiceReadyB', function (data) {
+  choiceReady = true;
+});
+
+socket.emit('streamStatus', '');
+socket.on('streamStatus', function (data) {
+  console.log('stream status ' + data.streamRunning + ' : ' + data.paused);
+  if (data.paused) {
+    pause = true;
+    playerInstance.pause();
+  }
+});
+
+function changeVideo (data) {
+   console.log("data is ", data);
+  names = data.split('/');
+
+  name = names[names.length - 1];
+  name = name.substring(0, name.length - 4);
+  if (name.substring(name.length-2, name.length) == '_1') {
+    name = name.substring(0, name.length - 2);
+  } else {
+    console.log('old video attempted to play: ' + name);
+  }
+  name = name + ".mp4";
+  name = "/backgrounds/files/" + name;
+  console.log('change video ' + name);
+  if (!pause) {
+    playerInstance.load([{file:name}]);
+    playerInstance.play(true).setVolume(100);
+    randomSkip = false;
+    nextVid = "";
+  } else {
+    nextVid = name;
+  }
+}
+</script>
+</body>
+</html>

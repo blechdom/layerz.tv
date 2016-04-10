@@ -1,0 +1,91 @@
+@font-face {
+   font-family: myFirstFont;
+   src: url(/stylesheets/font_Caligo1.0.ttf);
+}
+h1 {
+  font-size: 45px;
+  font-family: myFirstFont;
+  margin-bottom: -30px;
+  margin-top: 0px;
+  margin-left: 15%;
+}
+h2 {
+  font-size: 25px;
+  font-family: myFirstFont;
+  margin-bottom:  15px;
+  margin-left: 18%;
+}
+.nameSelect {
+  position: relative;
+  margin-left: 15%;
+}
+.row {
+  margin-bottom: 20px;
+}
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+[class*="col-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+
+/* from index.html */
+.thumbnail_container {
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; <!-- matching this to above makes it square -->
+     float:left;
+}
+
+.thumbnail {
+    position:absolute;
+    width:100%;
+    height:100%;
+}
+.thumbnail img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+.bordered {
+  border-width: "thick";
+  border-style: "solid";
+  border-color: "#1a75ff";
+}
+.hoverOver {
+    /*border-style: solid;
+    border-width: medium;
+    border-color: blue;
+    *//*position: relative;*/
+    visibility: hidden;
+}
+.locked {
+  opacity: 0.4;
+  filter: alpha(opacity=40); /* msie */
+}
+.chatLine {
+  margin-left: 100px;
+}
+
+img{
+    max-height:100%;
+    max-width:100%;
+}
+.submit{
+  font-size: 34px;
+}
